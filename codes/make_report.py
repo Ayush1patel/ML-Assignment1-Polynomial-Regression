@@ -16,7 +16,7 @@ from sklearn.model_selection import KFold, cross_val_predict
 
 ROLL = "BT2024171"
 REPO = "https://github.com/Ayush1patel/ML-Assignment1-Polynomial-Regression"
-NAVY, BLUE, ORANGE, GREY, LIGHT = "#1f3a5f", "#2a7de1", "#e8743b", "#555555", "#eef3fa"
+NAVY, BLUE, ORANGE, GREY, LIGHT = "black", "#222222", "#666666", "#555555", "#eeeeee"  # black and white theme
 plt.rcParams.update({"font.family": "DejaVu Sans", "axes.spines.top": False, "axes.spines.right": False})
 
 m = json.load(open(REPORT/"metrics.json"))
@@ -37,16 +37,16 @@ for v in (1, 2):
 
 def new_page(title, sub):
     fig = plt.figure(figsize=(8.27, 11.69))
-    fig.patches.append(plt.Rectangle((0, 0.935), 1, 0.065, transform=fig.transFigure, color=NAVY))
-    fig.text(0.06, 0.972, title, color="white", fontsize=17, weight="bold", va="center")
-    fig.text(0.06, 0.949, sub, color="#cfdcf0", fontsize=9, va="center")
+    fig.text(0.06, 0.972, title, color="black", fontsize=16, weight="bold", va="center")
+    fig.text(0.06, 0.949, sub, color=GREY, fontsize=8.5, va="center")
+    fig.add_artist(plt.Line2D([0.06, 0.94], [0.937, 0.937], color="black", lw=1.0))
     fig.text(0.5, 0.012, f"{ROLL}  |  Polynomial Regression  |  {REPO}", fontsize=6.5, color=GREY, ha="center")
     return fig
 
 
 def head(fig, x, y, s):
     fig.text(x, y, s, fontsize=11.5, weight="bold", color=NAVY, va="top")
-    fig.add_artist(plt.Line2D([x, x + 0.88], [y - 0.0165, y - 0.0165], color=BLUE, lw=1.2))
+    fig.add_artist(plt.Line2D([x, x + 0.88], [y - 0.0165, y - 0.0165], color="black", lw=0.6))
 
 
 def para(fig, x, y, s, width=104, size=8.6, color="#222222", ls=1.5):
@@ -56,7 +56,7 @@ def para(fig, x, y, s, width=104, size=8.6, color="#222222", ls=1.5):
 
 def card(fig, x, y, w, h, big, small, color=BLUE):
     fig.add_artist(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0,rounding_size=0.01", transform=fig.transFigure,
-                                  fc=LIGHT, ec=color, lw=1.2))
+                                  fc=LIGHT, ec="#888888", lw=0.8))
     fig.text(x + w/2, y + h*0.62, big, ha="center", va="center", fontsize=15, weight="bold", color=color)
     fig.text(x + w/2, y + h*0.22, small, ha="center", va="center", fontsize=7.2, color=GREY)
 
@@ -65,13 +65,11 @@ def table(fig, x, y, colw, rows, rh=0.0215, size=8):
     for i, r in enumerate(rows):
         yy = y - i*rh
         if i == 0:
-            fig.add_artist(plt.Rectangle((x, yy - rh*0.75), sum(colw), rh, transform=fig.transFigure, color=NAVY))
-        elif i % 2 == 0:
-            fig.add_artist(plt.Rectangle((x, yy - rh*0.75), sum(colw), rh, transform=fig.transFigure, color=LIGHT))
+            fig.add_artist(plt.Rectangle((x, yy - rh*0.75), sum(colw), rh, transform=fig.transFigure, color="#d9d9d9"))
         cx = x
         for j, c in enumerate(r):
             fig.text(cx + 0.008, yy - rh*0.25, str(c), fontsize=size, va="center",
-                     color="white" if i == 0 else "#222222", weight="bold" if (i == 0 or j == 0) else "normal")
+                     color="black", weight="bold" if (i == 0 or j == 0) else "normal")
             cx += colw[j]
 
 
@@ -144,8 +142,8 @@ for i, v in enumerate((1, 2)):
     un = g[g.alpha == 1e-6].set_index("degree").cv_mse
     ax = ax_at(f, 0.09 + 0.47*i, 0.715, 0.38, 0.14)
     ax.semilogy(best.index, best.values, "o-", ms=3.5, color=COL[v], label="best alpha (ridge)")
-    ax.semilogy(un.index, un.values, "s--", ms=3, color="#888888", lw=1, label="alpha = 1e-6 (almost unpenalised)")
-    ax.axvline(CFG[v]["degree"], color="#c0392b", ls=":", lw=1.3)
+    ax.semilogy(un.index, un.values, "s--", ms=3, color="#aaaaaa", lw=1, label="alpha = 1e-6 (almost unpenalised)")
+    ax.axvline(CFG[v]["degree"], color="black", ls=":", lw=1.3)
     ax.set_ylim(top=min(2000, un.max()*1.5))
     ax.set_title(f"var{v}: chosen d = {CFG[v]['degree']}", fontsize=9, color=NAVY, weight="bold")
     ax.set_xlabel("polynomial degree", fontsize=7.5); ax.set_ylabel("CV MSE (log scale)", fontsize=7.5)
@@ -157,13 +155,13 @@ for i, v in enumerate((1, 2)):
     g = grid[v]
     pv = g.pivot(index="alpha", columns="degree", values="cv_mse")
     ax = f.add_axes([0.09 + 0.47*i, 0.49, 0.33, 0.155]); ax.tick_params(labelsize=6.5)
-    im = ax.imshow(pv.values, aspect="auto", origin="lower", cmap="viridis_r", norm=LogNorm(vmin=0.2, vmax=100))
+    im = ax.imshow(pv.values, aspect="auto", origin="lower", cmap="gray_r", norm=LogNorm(vmin=0.2, vmax=100))
     step = 1 if v == 1 else 3
     ax.set_xticks(range(0, len(pv.columns), step)); ax.set_xticklabels(pv.columns[::step])
     ax.set_yticks(range(len(pv.index))); ax.set_yticklabels([f"{a:.3g}" for a in pv.index])
     bi = list(pv.index).index(min(pv.index, key=lambda a: abs(a - CFG[v]["alpha"])))
     bj = list(pv.columns).index(CFG[v]["degree"])
-    ax.plot(bj, bi, "*", color="#ff3b3b", ms=11, mec="white")
+    ax.plot(bj, bi, "*", color="white", ms=11, mec="black")
     ax.set_title(f"var{v}  (star = chosen)", fontsize=9, color=NAVY, weight="bold")
     ax.set_xlabel("degree", fontsize=7.5); ax.set_ylabel("alpha", fontsize=7.5)
     cb = f.colorbar(im, ax=ax, pad=0.02, fraction=0.05); cb.ax.tick_params(labelsize=6)
@@ -205,9 +203,9 @@ para(f, 0.06, 0.755, "MSE = mean((y - y_hat)^2) and R² = 1 - sum((y - y_hat)^2)
 head(f, 0.06, 0.68, "8. Out-of-fold predictions vs. actual values")
 for i, v in enumerate((1, 2)):
     y = tr[v].y.values
-    ax = ax_at(f, 0.09 + 0.47*i, 0.47, 0.37, 0.16)
+    ax = ax_at(f, 0.09 + 0.47*i, 0.49, 0.37, 0.14)
     ax.scatter(y, oof[v], s=5, alpha=.45, color=COL[v], lw=0)
-    ax.plot([y.min(), y.max()], [y.min(), y.max()], color="#c0392b", lw=1, label="ideal: y_hat = y")
+    ax.plot([y.min(), y.max()], [y.min(), y.max()], color="black", lw=1, label="ideal: y_hat = y")
     ax.set_title(f"var{v}: CV R² = {CFG[v]['cv_r2']:.4f}", fontsize=9, color=NAVY, weight="bold")
     ax.set_xlabel("actual y", fontsize=7.5); ax.set_ylabel("predicted y (out-of-fold)", fontsize=7.5)
     if i == 0:
@@ -217,7 +215,7 @@ for i, v in enumerate((1, 2)):
     res = tr[v].y.values - oof[v]
     ax = ax_at(f, 0.09 + 0.47*i, 0.255, 0.37, 0.15)
     ax.hist(res, bins=40, color=COL[v], alpha=.85)
-    ax.axvline(0, color="#c0392b", lw=1)
+    ax.axvline(0, color="black", lw=1)
     ax.set_title(f"var{v} residuals: mean {res.mean():.3f}, std {res.std():.3f}", fontsize=8.5, color=NAVY, weight="bold")
     ax.set_xlabel("y - y_hat (out-of-fold)", fontsize=7.5); ax.set_ylabel("count", fontsize=7.5)
 para(f, 0.06, 0.205,
@@ -240,7 +238,7 @@ for i, v in enumerate((1, 2)):
     ax = ax_at(f, 0.09 + 0.47*i, 0.725, 0.37, 0.15)
     xs = np.arange(len(cols)); w = 0.38
     ax.bar(xs - w/2, [tr[v][c].std() for c in cols], w, color=COL[v], label="train std")
-    ax.bar(xs + w/2, [te[v][c].std() for c in cols], w, color="#8e9aaf", label="test std")
+    ax.bar(xs + w/2, [te[v][c].std() for c in cols], w, color="#aaaaaa", label="test std")
     ax.set_xticks(xs); ax.set_xticklabels(cols, fontsize=7); ax.set_ylim(0, 1.2)
     ax.set_title(f"var{v}: values clipped at ±1: train {clipped(tr[v].drop(columns='y')):.0%}, test {clipped(te[v]):.0%}",
                  fontsize=7.8, color=NAVY, weight="bold")
@@ -266,7 +264,7 @@ para(f, 0.06, 0.52,
      "neighbouring degree could perform equally well. The same penalty is applied to all terms (no per-degree weighting), a "
      "simple choice that worked well here.")
 head(f, 0.06, 0.345, "12. Reproducibility and deliverables")
-para(f, 0.06, 0.32, f"GitHub repository (all training and inference code): {REPO}", width=150, color=BLUE)
+para(f, 0.06, 0.32, f"GitHub repository (all training and inference code): {REPO}", width=150, color="black")
 rows = [["Path in repository", "Content"],
         ["codes/cv_explore.py, cv_refine.py", "degree / alpha search by CV (coarse and fine)"],
         ["codes/cv_grid.py", "full CV grid used for the figures in this report"],
