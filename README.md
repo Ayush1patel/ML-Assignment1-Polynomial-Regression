@@ -19,6 +19,7 @@ Ridge-regularised polynomial regression for two problems (var1: 6 features, var2
 pip install -r requirements.txt
 python codes/cv_explore.py <var> <max_degree>     # degree/alpha search (e.g. 1 10, 2 20)
 python codes/cv_refine.py <var> <min_deg> <max_deg>
+python codes/cv_grid.py                           # full CV grid (degree x alpha) for the report figures
 python codes/train_predict.py                     # final fit + predictions + metrics
 python codes/make_report.py                       # builds the PDF report
 ```
